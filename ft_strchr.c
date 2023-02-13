@@ -18,10 +18,7 @@ char	*ft_strchr(const char *s, int c)
 
 	a = 0;
 	while (s[a] != (char)c)
-	{
-		if (!s[a])
+		if (!s[a++])
 			return (NULL);
-		a++;
-	}
 	return ((char *) & s[a]);
 }

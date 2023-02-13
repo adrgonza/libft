@@ -20,9 +20,6 @@ void	*ft_memset(void *s, int c, size_t n)
 	p = s;
 	i = 0;
 	while (i < n)
-	{
-		p[i] = c;
-		i++;
-	}
+		p[i++] = c;
 	return (s);
 }
