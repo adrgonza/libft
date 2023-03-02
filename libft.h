@@ -76,11 +76,4 @@ char	**ft_split(char const *s, char c);
 t_list	*ft_lstnew(void *content);
 t_list	*ft_lstlast(t_list *lst);
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
-int		ft_printf(char const *s, ...);
-int		ft_putchr(int c);
-int		ft_putstr(const char *s);
-int		ft_putnbr(int nb);
-int		ft_putunsigned(unsigned int a);
-int		ft_puthex(unsigned long n, char c);
-char	*get_next_line(int fd);
 #endif
