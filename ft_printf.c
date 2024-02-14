@@ -3,63 +3,76 @@
 /*                                                        :::      ::::::::   */
 /*   ft_printf.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adrgonza <adrgonza@student.42.fr>          +#+  +:+       +#+        */
+/*   By: adrgonza <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/25 14:36:06 by adrgonza          #+#    #+#             */
-/*   Updated: 2023/03/14 16:01:25 by adrgonza         ###   ########.fr       */
+/*   Updated: 2023/11/28 22:14:24 by adrgonza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_putunsigned(unsigned int a)
+int	ft_putunsigned(unsigned int const nb)
 {
-	int	b;
+	int	r_value;
+	int	count;
 
-	b = 0;
-	if (a > 9)
-		b += ft_putunsigned(a / 10);
-	return (b += ft_putchr(a % 10 + '0'));
+	count = 0;
+	r_value = 0;
+	if (nb > 9)
+	{
+		r_value = ft_putunsigned(nb / 10);
+		if (r_value == -1)
+			return (-1);
+		count += r_value;
+	}
+	if (ft_putchr(nb % 10 + '0') == -1)
+		return (-1);
+	count++;
+	return (count);
 }
 
-int	ft_putstr(const char *s)
+int	ft_putstr(char const *str)
 {
-	int	c;
+	int	i;
 
-	if (!s)
+	if (!str)
 		return (write(1, "(null)", 6));
-	c = 0;
-	while (s[c])
-		c++;
-	return (write(1, s, c));
+	i = 0;
+	while (str[i])
+		i++;
+	return (write(1, str, i));
 }
 
-int	ft_puthex(unsigned long n, char c)
+int	ft_puthex(unsigned long const nb, char ch)
 {
-	int		a;
+	int		r_value;
+	int		count;
 	char	*s;
 
-	a = 0;
-	if (c == 'X')
+	count = 0;
+	s = "0123456789abcdef";
+	if (ch == 'X')
 		s = "0123456789ABCDEF";
-	else
-		s = "0123456789abcdef";
-	if (c == 'p')
+	if (ch == 'p')
 	{
-		a += ft_putstr("0x");
-		c = 0;
+		count = ft_putstr("0x");
+		if (count == -1)
+			return (-1);
+		ch = 0;
 	}
-	if (n < 16)
-		a += ft_putchr(s[n]);
-	else
-	{
-		a += ft_puthex(n / 16, c);
-		a += ft_puthex(n % 16, c);
-	}
-	return (a);
+	if (nb < 16)
+		return (count += ft_putchr(s[nb]));
+	r_value = ft_puthex(nb / 16, ch);
+	if (r_value == -1)
+		return (-1);
+	r_value += ft_puthex(nb % 16, ch);
+	if (r_value == -1)
+		return (-1);
+	return (count + r_value);
 }
 
-int	ft_check_conversions(char s, va_list args)
+static int	ft_check_conversions(char const s, va_list args)
 {
 	if (s == 'c')
 		return (ft_putchr(va_arg(args, int)));
@@ -75,24 +88,27 @@ int	ft_check_conversions(char s, va_list args)
 		return (ft_puthex(va_arg(args, unsigned long int), s));
 	else if (s == '%')
 		return (write(1, "%", 1));
-	return (0);
+	return (-1);
 }
 
-int	ft_printf(char const *s, ...)
+int	ft_printf(char const *fmt, ...)
 {
 	va_list	args;
-	int		a;
+	int		r_value;
+	int		count;
 
-	va_start(args, s);
-	a = 0;
-	while (*s)
+	va_start(args, fmt);
+	count = 0;
+	while (*fmt)
 	{
-		if (*s == '%')
-			a += ft_check_conversions(*(++s), args);
+		if (*fmt == '%')
+			r_value = ft_check_conversions(*(++fmt), args);
 		else
-			a += write(1, &*s, 1);
-		s++;
+			r_value = write(1, &*fmt, 1);
+		if (r_value == -1)
+			return (va_end(args), -1);
+		count += r_value;
+		fmt++;
 	}
-	va_end(args);
-	return (a);
+	return (va_end(args), count);
 }

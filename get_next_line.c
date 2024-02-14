@@ -5,111 +5,93 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: adrgonza <adrgonza@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/09 16:50:14 by adrgonza          #+#    #+#             */
-/*   Updated: 2023/03/14 16:05:09 by adrgonza         ###   ########.fr       */
+/*   Created: 2022/12/14 01:50:39 by adrgonza          #+#    #+#             */
+/*   Updated: 2023/10/18 14:57:57 by adrgonza         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strjoin_s(char *s1, char *s2)
+static char	*concat_rem(char *rem_txt, const char *const buff, int i, int j)
 {
-	char	*str;
-	int		i;
-	int		j;
+	char	*new_rem;
 
-	if (!s1)
+	if (!rem_txt)
 	{
-		s1 = malloc(1);
-		s1[0] = '\0';
+		rem_txt = malloc(1 * sizeof(char));
+		if (!rem_txt)
+			return (NULL);
+		*rem_txt = 0;
 	}
-	str = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
-	if (!str)
-		return (NULL);
+	while (rem_txt && rem_txt[i])
+		i++;
+	while (buff && buff[j])
+		j++;
+	new_rem = malloc((i + j + 1) * sizeof(char));
+	if (!new_rem)
+		return (free(rem_txt), rem_txt = NULL);
 	i = -1;
+	while (rem_txt[++i])
+		new_rem[i] = rem_txt[i];
 	j = 0;
-	while (s1[++i] != '\0')
-		str[i] = s1[i];
-	while (s2[j])
-		str[i++] = s2[j++];
-	str[i] = '\0';
-	free(s1);
-	return (str);
+	while (buff && buff[j])
+		new_rem[i++] = buff[j++];
+	return (new_rem[i] = 0, free(rem_txt), new_rem);
 }
 
-char	*ft_line_cut(char *str)
+static char	*var_manage(char *line, char **rem_txt, int i, int j)
 {
-	char	*tmp;
-	int		i;
+	char	*new_rem;
 
-	i = 0;
-	if (!str[i])
-		return (NULL);
-	while (str[i] && str[i] != '\n')
+	while ((*rem_txt)[i] && (*rem_txt)[i] != '\n')
 		i++;
-	tmp = malloc(i + 2);
-	if (!tmp)
-		return (NULL);
-	tmp[i++] = '\0';
+	if (!(*rem_txt)[i])
+		i--;
+	line = malloc((i + 2) * sizeof(char));
+	if (!line)
+		return (free(*rem_txt), *rem_txt = NULL);
+	line[i + 1] = 0;
 	i = -1;
-	while (str[++i] && str[i] != '\n')
-		tmp[i] = str[i];
-	tmp[i] = str[i];
-	tmp[++i] = '\0';
-	return (tmp);
-}
-
-char	*ft_rest_str(char *str)
-{
-	char	*tmp;
-	int		i;
-	int		j;
-
-	i = 0;
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (!str[i])
-	{
-		free(str);
-		return (NULL);
-	}
-	tmp = malloc(ft_strlen(str) - i + 1);
-	if (!tmp)
-		return (NULL);
-	i++;
+	while ((*rem_txt)[++i] && (*rem_txt)[i] != '\n')
+		line[i] = (*rem_txt)[i];
+	line[i] = (*rem_txt)[i];
+	if (!(*rem_txt)[i])
+		return (free(*rem_txt), *rem_txt = NULL, line);
+	while ((*rem_txt)[j])
+		j++;
+	new_rem = malloc((j - i + 2) * sizeof(char));
+	if (!new_rem)
+		return (free(line), free(*rem_txt), *rem_txt = NULL);
 	j = 0;
-	while (str[i])
-		tmp[j++] = str[i++];
-	tmp[j] = '\0';
-	free(str);
-	return (tmp);
+	while ((*rem_txt)[++i])
+		new_rem[j++] = (*rem_txt)[i];
+	return (new_rem[j] = 0, free(*rem_txt), *rem_txt = new_rem, line);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*str[OPEN_MAX];
+	static char	*rem_txt;
 	char		*line;
-	char		tmp[BUFFER_SIZE + 1];
-	int			nb;
+	char		buffer[BUFFER_SIZE + 1];
 	int			i;
 
-	nb = 1;
-	i = 0;
-	while (nb != 0)
+	while (1)
 	{
-		nb = read(fd, tmp, BUFFER_SIZE);
-		if (nb == -1 && str[fd])
-			free(str[fd]);
-		if (nb == -1)
-			return (str[fd] = NULL);
-		tmp[nb] = '\0';
-		str[fd] = ft_strjoin_s(str[fd], tmp);
-		while (tmp[i] != '\n' && tmp[i] != '\0')
-			i++;
-		if (tmp[i] == '\n')
+		i = read(fd, buffer, BUFFER_SIZE);
+		if (i == -1)
+			return (free(rem_txt), rem_txt = NULL);
+		buffer[i] = 0;
+		rem_txt = concat_rem(rem_txt, buffer, 0, 0);
+		if (!rem_txt)
+			return (free(rem_txt), rem_txt = NULL);
+		if (i == 0)
 			break ;
+		i = -1;
+		while (buffer[++i] && buffer[i] != '\n')
+			if (buffer[i + 1] == '\n')
+				return (line = NULL, var_manage(line, &rem_txt, 0, 0));
 	}
-	line = ft_line_cut(str[fd]);
-	str[fd] = ft_rest_str(str[fd]);
-	return (line);
+	if (!*rem_txt)
+		return (free(rem_txt), rem_txt = NULL);
+	return (line = NULL, var_manage(line, &rem_txt, 0, 0));
 }

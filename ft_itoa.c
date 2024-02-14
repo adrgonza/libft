@@ -14,39 +14,38 @@
 
 size_t	sizeof_int(int len)
 {
-	int	a;
+	int	i;
 
-	a = 0;
+	i = 0;
 	if (len <= 0)
-		a = 1;
-	while (len && ++a)
+		i = 1;
+	while (len && ++i)
 		len = len / 10;
-	return (a);
+	return (i);
 }
 
 char	*ft_itoa(int n)
 {
 	char		*str;
-	long long	b;
-	size_t		a;
+	long long	number;
+	size_t		len;
 
-	b = n;
-	a = sizeof_int(n);
-	str = (char *)malloc(a + 1);
+	number = n;
+	len = sizeof_int(n);
+	str = (char *)ft_calloc(len, sizeof(char));
 	if (!str)
 		return (NULL);
-	str[a] = '\0';
 	if (n < 0)
 	{
-		b = b * -1;
+		number *= -1;
 		str[0] = '-';
 	}
-	if (b == 0)
+	if (!number)
 		str[0] = '0';
-	while (b > 0)
+	while (number > 0)
 	{
-		str[--a] = b % 10 + '0';
-		b = b / 10;
+		str[--len] = number % 10 + '0';
+		number /= 10;
 	}
 	return (str);
 }

@@ -14,20 +14,19 @@
 
 char	*ft_strnstr(const char *s1, const char *s2, size_t n)
 {
-	size_t	a;
-	size_t	b;
+	size_t	i;
+	size_t	j;
 
 	if (*s2 == 0)
 		return ((char *) s1);
-	a = 0;
-	while (a < n && s1[a] != '\0')
+	i = -1;
+	while (s1[++i] && i < n)
 	{
-		b = 0;
-		while (a + b < n && s1[a + b] == s2[b] && s2[b] != '\0')
-			b++;
-		if (s2[b] == '\0')
-			return ((char *)s1 + a);
-		a++;
+		j = 0;
+		while (s2[j] && i + j < n && s1[i + j] == s2[j])
+			j++;
+		if (!s2[j])
+			return ((char *)s1 + i);
 	}
 	return (NULL);
 }

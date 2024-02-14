@@ -14,44 +14,41 @@
 
 int	ft_countwords(const char *s, char c)
 {
-	int	a;
-	int	b;
+	int	i;
+	int	n_words;
 
-	b = 0;
-	a = 0;
-	while (s[a] == c && s[a])
-		a++;
-	while (s[a])
+	i = 0;
+	n_words = 0;
+	while (s[i] == c && s[i])
+		i++;
+	while (s[i])
 	{
-		while (s[a] != c && s[a])
-			a++;
-		while (s[a] == c && s[a])
-			a++;
-		b++;
+		while (s[i] && s[i] != c)
+			i++;
+		while (s[i] && s[i] == c)
+			i++;
+		n_words++;
 	}
-	return (b);
+	return (n_words);
 }
 
 int	ft_count_letters(const char *s, char c)
 {
-	int	a;
+	int	i;
 
-	a = 0;
-	while (s[a] != c && s[a])
-		a++;
-	return (a);
+	i = 0;
+	while (s[i] && s[i] != c)
+		i++;
+	return (i);
 }
 
 char	*ft_freeg(char **words)
 {
-	int	b;
+	int	i;
 
-	b = 0;
-	while (words[b])
-	{
-		free(words[b]);
-		b++;
-	}
+	i = 0;
+	while (words[i])
+		free(words[i++]);
 	free(words);
 	return (NULL);
 }
@@ -60,8 +57,8 @@ char	**ft_split(char const *s, char c)
 {
 	char	**words;
 	int		count;
-	int		a;
-	int		b;
+	int		i;
+	int		j;
 
 	if (!s)
 		return (NULL);
@@ -69,18 +66,17 @@ char	**ft_split(char const *s, char c)
 	words = ft_calloc(sizeof(char *), (count + 1));
 	if (!words)
 		return (NULL);
-	b = 0;
+	i = 0;
 	while (count--)
 	{
 		while (*s == c && *s)
 			s++;
-		a = 0;
-		words[b] = malloc((sizeof(char)) * (ft_count_letters(s, c) + 1));
-		if (!words[b])
+		words[i] = ft_calloc((sizeof(char)), (ft_count_letters(s, c) + 1));
+		if (!words[i])
 			return ((char **)ft_freeg(words));
+		j = 0;
 		while (*s != c && *s)
-			words[b][a++] = *s++;
-		words[b++][a] = 0;
+			words[i][j++] = *s++;
 	}
 	return (words);
 }

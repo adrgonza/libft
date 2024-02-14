@@ -14,17 +14,17 @@
 
 int	ft_putnbr(int nb)
 {
-	int	a;
+	int	count;
 
-	a = 0;
+	count = 0;
 	if (nb == -2147483648)
 		return (write(1, "-2147483648", 11));
 	if (nb < 0)
 	{
-		a += ft_putchr('-');
-		nb = nb * -1;
+		count += ft_putchr('-');
+		nb *= -1;
 	}
 	if (nb > 9)
-		a += ft_putnbr(nb / 10);
-	return (a += ft_putchr(nb % 10 + '0'));
+		count += ft_putnbr(nb / 10);
+	return (count += ft_putchr(nb % 10 + '0'));
 }
