@@ -84,3 +84,10 @@ To build the library, simply run:
 
 ```bash
 make
+```
+
+## Contributing
+Contributions are welcome! If you find any bugs or have suggestions for improvement, please open an issue or submit a pull request on GitHub.
+
+## Credits
+This project was created by adrgonza for the libft project at 42Madrid.
