@@ -22,7 +22,7 @@ To use this library in your projects, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/yourusername/libft.git
+    git clone https://github.com/adrgonza/libft.git
     ```
 
 2. Include the `libft.h` header file in your source code:
