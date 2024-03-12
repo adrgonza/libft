@@ -8,6 +8,8 @@ Welcome to libft! This project aims to create a library of fundamental C functio
 2. [Usage](#usage)
 3. [Function Descriptions](#function-descriptions)
 4. [Building](#building)
+5. [Contributing](#contributing)
+6. [Credits](#credits)
 
 ## Introduction
 
